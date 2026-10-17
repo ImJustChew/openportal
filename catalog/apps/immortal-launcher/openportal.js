@@ -588,7 +588,9 @@ export async function provision(portal, answers) {
 	const fleet = await enableFleet(portal, a.enableFleet, a.fleetName);
 	await configureBootApps(portal);
 	if (a.restoreAlexa) await restoreAlexa(portal);
+	await sh(portal, "input keyevent KEYCODE_WAKEUP");
 	await sh(portal, "input keyevent KEYCODE_HOME");
+	if (a.setLauncher) await sh(portal, `am start -n ${portal.cfg.homeActivity}`);
 	portal.step("finish", "ok");
 	return { fleet };
 }
