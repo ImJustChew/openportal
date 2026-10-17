@@ -486,13 +486,13 @@ export const manifest = {
 	apiVersion: 2,
 	name: "Immortal launcher",
 	steps: [
+		"disableVerifier",
 		"installClient",
 		"startShizuku",
 		"installApps",
 		"pushAssets",
 		"grantPerms",
 		"applySystemTweaks",
-		"disableVerifier",
 		"disableInstallerOverlay",
 		"disableOta",
 		"disablePresence",
@@ -570,6 +570,7 @@ export function defaultOptions(portal) {
 
 export async function provision(portal, answers) {
 	const a = answers ?? {};
+	await disableVerifier(portal);
 	await installClient(portal);
 	if (a.installShizuku) await startShizuku(portal);
 	else portal.step("startShizuku", "skip");
@@ -578,7 +579,6 @@ export async function provision(portal, answers) {
 	await pushAssets(portal);
 	await grantPerms(portal);
 	await applySystemTweaks(portal);
-	await disableVerifier(portal);
 	await disableInstallerOverlay(portal);
 	await disableOta(portal, a.disableOta);
 	await disablePresence(portal, a.disablePresence);
