@@ -165,6 +165,7 @@
 			"enabled": "activé"
 		},
 		"opt": {
+			"credentials": "Identifiants OAuth (client_secret.json)",
 			"blockOta": "Bloquer les mises à jour système",
 			"blockOtaHint": "Empêche une future OTA de Meta d'annuler cette configuration. Renonce aux mises à jour ; réversible.",
 			"disableOta": "Bloquer les mises à jour système",
