@@ -1,5 +1,5 @@
 import { deviceFetchText } from "@/lib/adb/online-install";
-import { githubApiHeaders } from "@/lib/github-token";
+import { githubApiFetch } from "@/lib/github-token";
 import type { Adb } from "@yume-chan/adb";
 import fdroidMirrors from "./fdroid-mirrors.json";
 import { type CatalogApp, isPanelProgram } from "./types";
@@ -87,9 +87,8 @@ export async function resolveGithubLatest(
 	repo: string,
 	assetPattern?: string,
 ): Promise<ResolvedApk> {
-	const res = await fetch(
+	const res = await githubApiFetch(
 		`https://api.github.com/repos/${repo}/releases/latest`,
-		{ headers: githubApiHeaders() },
 	);
 	if (!res.ok) {
 		throw new Error(`GitHub API returned ${res.status}`);

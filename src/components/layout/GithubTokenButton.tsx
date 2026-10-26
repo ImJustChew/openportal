@@ -3,6 +3,7 @@ import {
 	GITHUB_NEW_TOKEN_URL,
 	setGithubToken,
 	useGithubToken,
+	useGithubTokenRejected,
 } from "@/lib/github-token";
 import { cn } from "@/lib/utils";
 import { ExternalLink, KeyRound } from "lucide-react";
@@ -12,6 +13,7 @@ import { useTranslation } from "react-i18next";
 export function GithubTokenButton() {
 	const { t } = useTranslation();
 	const saved = useGithubToken();
+	const rejected = useGithubTokenRejected();
 	const [open, setOpen] = useState(false);
 	const [draft, setDraft] = useState("");
 
@@ -29,7 +31,11 @@ export function GithubTokenButton() {
 				aria-label={t("githubToken")}
 				className={cn(
 					"rounded-md p-1.5 hover:bg-accent hover:text-foreground",
-					saved ? "text-emerald-500" : "text-muted-foreground",
+					!saved
+						? "text-muted-foreground"
+						: rejected
+							? "text-amber-500"
+							: "text-emerald-500",
 				)}
 			>
 				<KeyRound className="h-4 w-4" />
@@ -68,6 +74,11 @@ export function GithubTokenButton() {
 			>
 				<div className="space-y-3 text-sm">
 					<p className="text-muted-foreground">{t("githubTokenBody")}</p>
+					{saved && rejected && (
+						<p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-600 dark:text-amber-400">
+							{t("githubTokenRejected")}
+						</p>
+					)}
 					<a
 						href={GITHUB_NEW_TOKEN_URL}
 						target="_blank"

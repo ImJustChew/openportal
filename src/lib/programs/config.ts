@@ -1,5 +1,5 @@
 import { deviceFetchText } from "@/lib/adb/online-install";
-import { githubApiHeaders } from "@/lib/github-token";
+import { githubApiFetch } from "@/lib/github-token";
 import type { Adb } from "@yume-chan/adb";
 import {
 	CONFIG_ENV_RAW,
@@ -206,9 +206,8 @@ interface GithubRelease {
 
 export async function resolveLatestTag(repo: string): Promise<string | null> {
 	try {
-		const res = await fetch(
+		const res = await githubApiFetch(
 			`https://api.github.com/repos/${repo}/releases/latest`,
-			{ headers: githubApiHeaders() },
 		);
 		if (!res.ok) return null;
 		const data = (await res.json()) as GithubRelease;

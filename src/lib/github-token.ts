@@ -1,8 +1,21 @@
 import { useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "openportal-github-token";
+const ACCEPT = "application/vnd.github+json";
 
 const listeners = new Set<() => void>();
+let rejected = false;
+
+function notify() {
+	for (const listener of listeners) listener();
+}
+
+function subscribe(cb: () => void) {
+	listeners.add(cb);
+	return () => {
+		listeners.delete(cb);
+	};
+}
 
 export function getGithubToken(): string {
 	try {
@@ -20,28 +33,32 @@ export function setGithubToken(token: string) {
 	} catch {
 		// Storage blocked: the token just won't persist.
 	}
-	for (const listener of listeners) listener();
+	rejected = false;
+	notify();
 }
 
 export function useGithubToken(): string {
+	return useSyncExternalStore(subscribe, getGithubToken, () => "");
+}
+
+export function useGithubTokenRejected(): boolean {
 	return useSyncExternalStore(
-		(cb) => {
-			listeners.add(cb);
-			return () => listeners.delete(cb);
-		},
-		getGithubToken,
-		() => "",
+		subscribe,
+		() => rejected,
+		() => false,
 	);
 }
 
-/** Headers for api.github.com, authenticated when the user saved a token. */
-export function githubApiHeaders(): Record<string, string> {
-	const headers: Record<string, string> = {
-		Accept: "application/vnd.github+json",
-	};
+export async function githubApiFetch(url: string): Promise<Response> {
 	const token = getGithubToken();
-	if (token) headers.Authorization = `Bearer ${token}`;
-	return headers;
+	if (!token || rejected) return fetch(url, { headers: { Accept: ACCEPT } });
+	const res = await fetch(url, {
+		headers: { Accept: ACCEPT, Authorization: `Bearer ${token}` },
+	});
+	if (res.status !== 401) return res;
+	rejected = true;
+	notify();
+	return fetch(url, { headers: { Accept: ACCEPT } });
 }
 
 /** Fine-grained token page with name/expiry prefilled; no permissions needed for public repos. */

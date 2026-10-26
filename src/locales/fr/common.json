@@ -61,6 +61,7 @@
 	"githubTokenCreate": "Créer un jeton sur GitHub",
 	"githubTokenSave": "Enregistrer",
 	"githubTokenClear": "Supprimer",
+	"githubTokenRejected": "GitHub a refusé ce jeton : il a probablement expiré ou été révoqué. OpenPortal utilise des requêtes anonymes jusqu'à ce que vous le remplaciez.",
 	"githubTokenPrivacy": "Stocké uniquement dans ce navigateur et envoyé uniquement à api.github.com.",
 	"sourceCode": "Code source",
 	"operationFailed": "L'opération a échoué",
